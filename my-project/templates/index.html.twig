@@ -1,45 +1,92 @@
-{% extends "base.html.twig" %}
+{% extends './base.html.twig' %}
+
+{% block title %}Servers Available{% endblock %}
 
 {% block body %}
-    <section class="container">
-        {{ dump(data.result.data) }}
-        <h1>Images</h1>
+    <div class="container">
         <div class="row">
-            {% for image in data.result.data %}
-                <div class="col-md-4">
-                    <img src="{{ image.url }}" alt="" class="w-100">
+            <div class="container">
+                <div class="row d-flex d-flex justify-content-between align-items-center my-3">
+                    <h1 class="col-md-3">Servers</h1>
+                    <form action="/filtered-servers" method="post" class="col-md-9">
+                            <div class="form-row d-flex m-1 gap-1 justify-content-end">
+                                <div class="col-md-2">
+                                    <label for="location">Location</label>
+                                    <select class="form-control" id="location" name="location">
+                                        <option value="">Select Location</option>
+                                        {% for location in filters.location %}
+                                            <option value="{{ location }}">{{ location }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="ram">RAM</label>
+                                    <select class="form-control" id="ram" name="ram">
+                                        <option value="">Qty Ram</option>
+                                        {% for ram in filters.ram %}
+                                            <option value="{{ ram }}">{{ ram }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="ram">TYPE RAM</label>
+                                    <select class="form-control" id="ram_type" name="ram_type">
+                                        <option value="">Type Ram</option>
+                                        {% for ram_type in filters.ram_type %}
+                                            <option value="{{ ram_type }}">{{ ram_type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="hdd">HDD</label>
+                                    <select class="form-control" id="hdd" name="hdd">
+                                        <option value="">Size HDD</option>
+                                        {% for hdd in filters.hdd %}
+                                            <option value="{{ hdd }}">{{ hdd }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label for="hdd_type">TYPE HDD</label>
+                                    <select class="form-control" id="hdd_type" name="hdd_type">
+                                        <option value="">Type HDD</option>
+                                        {% for hdd_type in filters.hdd_type %}
+                                            <option value="{{ hdd_type }}">{{ hdd_type }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="submit" class="btn btn-primary mt-4" id="btn">Filter</button>
+                                </div>
+                            </div>
+                    </form>
                 </div>
-            {% endfor %}
+                <table class="table">
+                    <thead>
+                        <tr> 
+                            {% set itemsOrder = ['Model', 'RAM', 'RAM_TYPE', 'HDD', 'HDD_TYPE', 'Location', 'Price'] %}
+                            {% set serverItems = servers[0] %}
+                            {% for item in itemsOrder %}
+                                <th>{{ serverItems[item] }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set serversRemovedFirstItem = servers|slice(1, servers|length) %}
+                        {% for server in serversRemovedFirstItem %}
+                            <tr>
+                                <td>{{ server.Model }}</td>
+                                <td>{{ server.RAM }}</td>
+                                <td>{{ server.RAM_TYPE }}</td>
+                                <td>{{ server.HDD }}</td>
+                                <td>{{ server.HDD_TYPE }}</td>
+                                <td>{{ server.Location }}</td>
+                                <td>{{ server.Price }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Balance</th>
-                    <th>Bank Name</th>
-                    <th>Bank Address</th>
-                    <th>Bank City</th>
-                    <th>Person Name</th>
-                    <th>Person Age</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if data.account %}
-                    <tr>
-                        <td>{{ data.account.number }}</td>
-                        <td>{{ data.account.balance }}</td>
-                        <td>{{ data.account.bank.name }}</td>
-                        <td>{{ data.account.bank.address }}</td>
-                        <td>{{ data.account.bank.city }}</td>
-                        <td>{{ data.account.person.name }}</td>
-                        <td>{{ data.account.person.age }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3">No news found</td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </section>
+    </div>    
 {% endblock %}

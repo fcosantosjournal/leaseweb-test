@@ -21,14 +21,14 @@ class ServersController extends AbstractController
   }
 
   /**
-   * @Route("/servers", name="servers")
+   * @Route("/", name="home")
    */
   public function index(): Response
   { 
     $this->servers = $this->serverModel->getServers();
     $this->filters = $this->serverModel->getFiltersFromServers($this->servers);
 
-    return $this->render('servers.html.twig', [
+    return $this->render('index.html.twig', [
         'servers' => $this->servers,
         'filters' => $this->filters
     ]);
