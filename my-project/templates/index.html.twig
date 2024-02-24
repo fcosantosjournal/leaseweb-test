@@ -1,0 +1,45 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <section class="container">
+        {{ dump(data.result.data) }}
+        <h1>Images</h1>
+        <div class="row">
+            {% for image in data.result.data %}
+                <div class="col-md-4">
+                    <img src="{{ image.url }}" alt="" class="w-100">
+                </div>
+            {% endfor %}
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Balance</th>
+                    <th>Bank Name</th>
+                    <th>Bank Address</th>
+                    <th>Bank City</th>
+                    <th>Person Name</th>
+                    <th>Person Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if data.account %}
+                    <tr>
+                        <td>{{ data.account.number }}</td>
+                        <td>{{ data.account.balance }}</td>
+                        <td>{{ data.account.bank.name }}</td>
+                        <td>{{ data.account.bank.address }}</td>
+                        <td>{{ data.account.bank.city }}</td>
+                        <td>{{ data.account.person.name }}</td>
+                        <td>{{ data.account.person.age }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">No news found</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </section>
+{% endblock %}
