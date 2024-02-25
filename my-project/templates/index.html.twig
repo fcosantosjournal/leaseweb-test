@@ -6,62 +6,73 @@
     <div class="container">
         <div class="row">
             <div class="container">
-                <div class="row d-flex d-flex justify-content-between align-items-center my-3">
-                    <h1 class="col-md-3">Servers</h1>
-                    <form action="/filtered-servers" method="post" class="col-md-9">
-                            <div class="form-row d-flex m-1 gap-1 justify-content-end">
-                                <div class="col-md-2">
-                                    <label for="location">Location</label>
-                                    <select class="form-control" id="location" name="location">
-                                        <option value="">Select Location</option>
-                                        {% for location in filters.location %}
-                                            <option value="{{ location }}">{{ location }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <label for="ram">RAM</label>
-                                    <select class="form-control" id="ram" name="ram">
-                                        <option value="">Qty Ram</option>
-                                        {% for ram in filters.ram %}
-                                            <option value="{{ ram }}">{{ ram }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <label for="ram">TYPE RAM</label>
-                                    <select class="form-control" id="ram_type" name="ram_type">
-                                        <option value="">Type Ram</option>
-                                        {% for ram_type in filters.ram_type %}
-                                            <option value="{{ ram_type }}">{{ ram_type }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <label for="hdd">HDD</label>
-                                    <select class="form-control" id="hdd" name="hdd">
-                                        <option value="">Size HDD</option>
-                                        {% for hdd in filters.hdd %}
-                                            <option value="{{ hdd }}">{{ hdd }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <label for="hdd_type">TYPE HDD</label>
-                                    <select class="form-control" id="hdd_type" name="hdd_type">
-                                        <option value="">Type HDD</option>
-                                        {% for hdd_type in filters.hdd_type %}
-                                            <option value="{{ hdd_type }}">{{ hdd_type }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-1">
-                                    <button type="submit" class="btn btn-primary mt-4" id="btn">Filter</button>
-                                </div>
+                <div class="row d-flex justify-content-between align-items-center my-3">
+                    <h2 class="col-md-4">Servers Available</h2>
+                    <form action="/filtered-servers" method="post" class="col-md-8" id="form">
+                        <div class="form-row d-flex m-1 gap-1 justify-content-end">
+                            <div class="col-md-2">
+                                <select class="form-control" id="location" name="location">
+                                    <option value="">Select Location</option>
+                                    {% for location in filters.location %}
+                                        <option value="{{ location }}">{{ location }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="ram_type" name="ram_type">
+                                    <option value="">Type Ram</option>
+                                    {% for ram_type in filters.ram_type %}
+                                        <option value="{{ ram_type }}">{{ ram_type }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" id="hdd_type" name="hdd_type">
+                                    <option value="">Type HDD</option>
+                                    {% for hdd_type in filters.hdd_type %}
+                                        <option value="{{ hdd_type }}">{{ hdd_type }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                {% set filtersHddRange = [] %}
+                                {% set zero = "0" %}
+                                {% set filtersHddRange = filtersHddRange|merge([zero]) %}
+                                {% for key, value in filters.hdd %}
+                                    {% set filtersHddRange = filtersHddRange|merge([value]) %}
+                                {% endfor %}
+
+                                <div id="hdd-sizes" class="hidden" data-sizes="{{ filtersHddRange|json_encode }}"></div>
+                                <input type="range" 
+                                    min="{{ filters.hdd|keys|first }}"
+                                    max="{{ filters.hdd|keys|last + 1 }}"
+                                    value="{{ filters.hdd|keys|first }}"
+                                    step="1"
+                                    class="form-range" 
+                                    id="hdd_range" 
+                                    name="hdd_range">
+                                <div id="range_selected" class="mt-n3">Select HDD Size</div>
+                                <input type="hidden" id="hdd" name="hdd" value="{{ filters.hdd|keys|first }}">
+                            </div>
+                        </div>
+                        <div class="form-row d-flex m-1 gap-1 justify-content-end">
+                            <div class="col-md-10 px-2 d-flex gap-3 justify-content-end">
+                                {% for ram in filters.ram %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="{{ ram }}" id="ram{{ ram|replace({'GB': ''}) }}" name="ram[]">
+                                        <label class="form-check-label ml-n1" for="ram{{ ram|replace({'GB': ''}) }}">
+                                            {{ ram }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>                            
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary" id="btn">Filter</button>
+                            </div>
+                        </div>
                     </form>
                 </div>
-                <table class="table">
+                <table class="table table-striped">
                     <thead>
                         <tr> 
                             {% set itemsOrder = ['Model', 'RAM', 'RAM_TYPE', 'HDD', 'HDD_TYPE', 'Location', 'Price'] %}
@@ -88,5 +99,6 @@
                 </table>
             </div>
         </div>
-    </div>    
+    </div> 
+    <script src="./js/range.js"></script>
 {% endblock %}

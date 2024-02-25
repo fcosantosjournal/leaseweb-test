@@ -6,12 +6,11 @@
     <div class="container">
         <div class="row">
             <div class="container">
-                <div class="row d-flex d-flex justify-content-between align-items-center my-3">
-                    <h1 class="col-md-3">Servers</h1>
-                    <form id="filter-form" class="col-md-9">
+                <div class="row d-flex justify-content-between align-items-center my-3">
+                    <h1 class="col-md-4">Servers Available</h1>
+                    <form id="form" class="col-md-8">
                         <div class="form-row d-flex m-1 gap-1 justify-content-end">
                             <div class="col-md-2">
-                                <label for="location">Location</label>
                                 <select class="form-control" id="location" name="location">
                                     <option value="">Select Location</option>
                                     {% for location in filters.location %}
@@ -19,17 +18,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-1">
-                                <label for="ram">RAM</label>
-                                <select class="form-control" id="ram" name="ram">
-                                    <option value="">Qty Ram</option>
-                                    {% for ram in filters.ram %}
-                                        <option value="{{ ram }}">{{ ram }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="ram">TYPE RAM</label>
+                            <div class="col-md-2">
                                 <select class="form-control" id="ram_type" name="ram_type">
                                     <option value="">Type Ram</option>
                                     {% for ram_type in filters.ram_type %}
@@ -37,17 +26,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-1">
-                                <label for="hdd">HDD</label>
-                                <select class="form-control" id="hdd" name="hdd">
-                                    <option value="">Size HDD</option>
-                                    {% for hdd in filters.hdd %}
-                                        <option value="{{ hdd }}">{{ hdd }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-1">
-                                <label for="hdd_type">TYPE HDD</label>
+                            <div class="col-md-2">
                                 <select class="form-control" id="hdd_type" name="hdd_type">
                                     <option value="">Type HDD</option>
                                     {% for hdd_type in filters.hdd_type %}
@@ -55,13 +34,45 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                            <div class="col-md-2">
+                                {% set filtersHddRange = [] %}
+                                {% set zero = "0" %}
+                                {% set filtersHddRange = filtersHddRange|merge([zero]) %}
+                                {% for key, value in filters.hdd %}
+                                    {% set filtersHddRange = filtersHddRange|merge([value]) %}
+                                {% endfor %}
+
+                                <div id="hdd-sizes" class="hidden" data-sizes="{{ filtersHddRange|json_encode }}"></div>
+                                <input type="range" 
+                                    min="{{ filters.hdd|keys|first }}"
+                                    max="{{ filters.hdd|keys|last + 1 }}"
+                                    value="{{ filters.hdd|keys|first }}"
+                                    step="1"
+                                    class="form-range" 
+                                    id="hdd_range" 
+                                    name="hdd_range">
+                                <div id="range_selected" class="mt-n3">Select HDD Size</div>
+                                <input type="hidden" id="hdd" name="hdd" value="{{ filters.hdd|keys|first }}">
+                            </div>
+                        </div>
+                        <div class="form-row d-flex m-1 gap-1 justify-content-end">
+                            <div class="col-md-10 px-2 d-flex gap-3 justify-content-end">
+                                {% for ram in filters.ram %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="{{ ram }}" id="ram{{ ram|replace({'GB': ''}) }}" name="ram[]">
+                                        <label class="form-check-label ml-n1" for="ram{{ ram|replace({'GB': ''}) }}">
+                                            {{ ram }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>                            
                             <div class="col-md-1">
-                                <button type="button" class="btn btn-primary mt-4" id="filter-btn">Filter</button>
+                                <button type="button" class="btn btn-primary" id="filter-btn">Filter</button>
                             </div>
                         </div>
                     </form>
                 </div>
-                <table id="servers-table" class="table mb-5">
+                <table id="servers-table" class="table mb-5 table-striped">
                     <thead>
                         <tr> 
                             {% set itemsOrder = ['Model', 'RAM', 'RAM_TYPE', 'HDD', 'HDD_TYPE', 'Location', 'Price'] %}
@@ -88,55 +99,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById('filter-btn').addEventListener('click', function() {
-            var form = document.getElementById('filter-form');
-            var formData = new FormData(form);
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/api/filter-servers', true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    var servers = JSON.parse(xhr.responseText);
-                    updateServersTable(servers);
-                } else {
-                    console.error('Request failed. Status: ' + xhr.status);
-                }
-            };
-            xhr.onerror = function() {
-                console.error('Request failed');
-            };
-            xhr.send(formData);
-        });
-
-        var originalColumnOrder;
-
-        function saveOriginalColumnOrder() {
-            var headerCells = document.getElementById('servers-table').getElementsByTagName('thead')[0].getElementsByTagName('th');
-            originalColumnOrder = Array.from(headerCells).map(function(cell) {
-                return cell.textContent.trim();
-            });
-        }
-
-        function updateServersTable(servers) {
-            var tableBody = document.getElementById('servers-table').getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = '';
-            
-            if (!originalColumnOrder) {
-                saveOriginalColumnOrder();
-            }
-
-            for (var i = 1; i < servers.length; i++) {
-                var server = servers[i];
-                var row = document.createElement('tr');
-                originalColumnOrder.forEach(function(column) {
-                    var cell = document.createElement('td');
-                    cell.textContent = server[column];
-                    row.appendChild(cell);
-                });
-                tableBody.appendChild(row);
-            }
-        }
-    </script>
+    <script src="./js/range.js"></script>
+    <script src="./js/update_table.js"></script>
 {% endblock %}
