@@ -155,13 +155,33 @@ class FileService
   private function formatHddSize(int $sizeInBytes): string
   {
       if ($sizeInBytes == 240 * 1000) {
-          return "250GB";
+        return "250GB";
       } elseif ($sizeInBytes == 480 * 1000) {
-          return "500GB";
+        return "500GB";
       } elseif ($sizeInBytes < 1000) {
-          return $sizeInBytes . "GB";
+        return $sizeInBytes . "GB";
+      } elseif ($sizeInBytes > 1900 * 1000 && $sizeInBytes < 2001 * 1000) {
+        return "2TB";
+      } elseif ($sizeInBytes > 3900 * 1000 && $sizeInBytes < 4001 * 1000) {
+        return "4TB";
+      } elseif ($sizeInBytes > 7800 * 1000 && $sizeInBytes < 8001 * 1000) {
+        return "8TB";
+      } elseif ($sizeInBytes > 15600 * 1000 && $sizeInBytes < 16001 * 1000) {
+        return "16TB";
+      } elseif ($sizeInBytes > 31200 * 1000 && $sizeInBytes < 32001 * 1000) {
+        return "32TB";
+      } elseif ($sizeInBytes > 62400 * 1000 && $sizeInBytes < 64001 * 1000) {
+        return "64TB";
+      } elseif ($sizeInBytes > 124800 * 1000 && $sizeInBytes < 128001 * 1000) {
+        return "128TB";
+      } elseif ($sizeInBytes > 249600 * 1000 && $sizeInBytes < 256001 * 1000) {
+        return "256TB";
+      } elseif ($sizeInBytes > 499200 * 1000 && $sizeInBytes < 512001 * 1000) {
+        return "512TB";
+      } elseif ($sizeInBytes > 998400 * 1000 && $sizeInBytes < 1024001 * 1000) {
+        return "1PB";
       } else {
-          return ($sizeInBytes / 1000) . "TB";
+        return ($sizeInBytes / 1000) . "TB";
       }
   }
 

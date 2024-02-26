@@ -40,26 +40,36 @@ class SortService
   }
 
   public function sortHdd(array $filterHdd): array
-  {    
-      array_shift($filterHdd);
-      $extractData = function($value) {
-          preg_match('/^(\d+(?:\.\d+)?)(GB|TB)$/', $value, $matches);
-          return [
-              'value' => (float)$matches[1],
-              'unit' => $matches[2]
-          ];
-      };
-      usort($filterHdd, function($a, $b) use ($extractData) {
-          $dataA = $extractData($a);
-          $dataB = $extractData($b);
-          if ($dataA['unit'] !== $dataB['unit']) {
-              return strcmp($dataA['unit'], $dataB['unit']);
-          } else {
-              return $dataA['value'] - $dataB['value'];
-          }
-      });
-      return $filterHdd;
-  }
+  {
+    $formatHddSize = function($value) {
+        preg_match('/^(\d+(?:\.\d+)?)(GB|TB)$/', $value, $matches);
+        $sizeInBytes = $matches[1];
+        $unit = $matches[2];
+
+        switch ($unit) {
+            case 'GB':
+                return $sizeInBytes * 1000;
+            case 'TB':
+                return $sizeInBytes * 1000000;
+            default:
+                return 0;
+        }
+    };
+
+    usort($filterHdd, function($a, $b) use ($formatHddSize) {
+        $sizeA = $formatHddSize($a);
+        $sizeB = $formatHddSize($b);
+
+        if ($sizeA == $sizeB) {
+            return 0;
+        }
+
+        return ($sizeA < $sizeB) ? -1 : 1;
+    });
+
+    return $filterHdd;
+}
+
 
   public function sortLocation(array $filterLocation): array
   {     
