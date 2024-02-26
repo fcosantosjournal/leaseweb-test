@@ -1,4 +1,4 @@
-# Lease web - PHP Test
+# Leaseweb - PHP Test
 
 You can see the project on air in: https://leaseweb.fcosantos.pt
 
