@@ -1,4 +1,25 @@
-## Lease web - PHP Test
+# Lease web - PHP Test
+
+You can see the project on air in: https://leaseweb.fcosantos.pt
+
+After run the docker composer file do attach on myapp container terminal and run the composer install command.
+On my case I'm using the docker extension to do that.
+
+You can also download it from my webserver and just run the container or put the files in a web server running PHP 8.1 or hight.
+Get the link for download: https://leaseweb.fcosantos.pt/project.zip
+
+### Docker extension
+![image](https://github.com/fcosantosjournal/leaseweb-test/assets/54321059/1e391754-927f-4477-bbd4-637552ea7642)
+
+### Docker compose Up command on Docker extension
+![image](https://github.com/fcosantosjournal/leaseweb-test/assets/54321059/4ebc5e44-ab77-4760-99c1-384845ba6009)
+
+### Attach on the terminal container
+![image](https://github.com/fcosantosjournal/leaseweb-test/assets/54321059/dfa6c6c3-d2d5-4b21-8a13-c7da8b66826d)
+
+
+
+## Environment
 
 On this project I'm using a Docker compose file to provide one enviroment using Symfony6 - But how you can see on the image below I disable the phpmyadmin and mysql containers, because the project is not using it.
 
