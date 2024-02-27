@@ -27,7 +27,7 @@ class ApplyFiltersService
     {
         foreach ($filterBy as $key => $value) {
             if (empty($value)) {
-                continue; // Ignorar filtros vazios
+                continue; 
             }
             
             switch ($key) {
